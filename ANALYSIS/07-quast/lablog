@@ -1,0 +1,9 @@
+#Executing this lablog will create the script _01_quast.sh, this script returns quast reports for the previous assembly done with SPADES
+
+#module load singularity (this must be executed on th terminal)
+
+mkdir -p logs
+
+scratch_dir=$(echo $PWD | sed "s/\/data\/ucct\/bi\/scratch_tmp/\/scratch/g")
+
+cat ../samples_id.txt | while read in; do echo "mkdir $in; srun --partition middle_idx --cpus-per-task 8 --mem 300G --chdir $scratch_dir --output logs/SPADES.${in}.%j.log singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-spades-4.0.0--h5fb382e_1.img rnaviralspades.py -1 ${scratch_dir}/../02-preprocessing/${in}/${in}_R2_filtered.fastq.gz -2 ${scratch_dir}/../02-preprocessing/$in/${in}_R1_filtered.fastq.gz -k 21,33,55,77,99 -m 280 -o $in &"; done > _01_spades.sh  
