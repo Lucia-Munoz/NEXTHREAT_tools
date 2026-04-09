@@ -1,0 +1,9 @@
+#Executing this lablog creates the script _01_kraken2.sh, the output of this script are two archives viral_reads_{sample}_R1.fastq and  viral_reads_{sample}_R2.fastq, containing the unclassified reads, the classified reads are not saved
+
+#module load singularity (this must be executed on the terminal)
+
+mkdir logs
+
+scratch_dir=$(echo $PWD | sed "s/\/data\/ucct\/bi\/scratch_tmp/\/scratch/g")
+
+cat ../samples_id.txt | while read in; do echo "mkdir $in; srun --partition short_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/KRAKEN.${in}.%j.log singularity exec -B ${scratch_dir}/../../../ -B /data/ucct/bi/references/kraken/ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-kraken2-2.0.8_beta--pl526hc9558a2_2.img kraken2 --db /data/ucct/bi/references/kraken/kraken2_vero --paired --threads 12 --report ${scratch_dir}/$in/${in}_kraken.report --report-zero-counts --unclassified-out ${scratch_dir}/$in/viral_reads_${in}#.fastq ${scratch_dir}/../02-preprocessing/${in}/${in}_R1_filtered.fastq.gz ${scratch_dir}/../02-preprocessing/${in}/${in}_R2_filtered.fastq.gz &"; done > _01_kraken2.sh
