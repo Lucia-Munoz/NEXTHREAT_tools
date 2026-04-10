@@ -1,1 +1,19 @@
-#This lablog
+#Executing this lablog will create three scripts _01_seqtk.sh, _02_seqtk.sh and _03_diamond.sh. The first script (_01_seqtk.sh) filters contigs by lenght > 300 and concatenates the trim reads into an unique fasta
+#The _02_seqtk.sh filters reads by lenght >100. Finally the _03_diamond.sh executes the homology search with DIAMOND
+
+#module load singularity (this must me executed on the terminal)
+
+mkdir -p logs
+
+scratch_dir=$(echo $PWD | sed "s/\/data\/ucct\/bi\/scratch_tmp/\/scratch/g")
+
+#This generates the first script
+cat ../samples_id.txt | while read in; do echo "mkdir $in; srun --partition short_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/SEQTK.${in}.%j.log singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-seqtk-1.3--h5bf99c6_3.img bash -c 'seqtk seq -L 300 ${scratch_dir}/../06-spades/$in/contigs.fasta > ../06-spades/$in/${in}_filtered_contigs.fasta' &"; done > _01_seqtk.sh
+cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/SEQTK.${in}.%j.log bash -c 'zcat ${scratch_dir}/../02-preprocessing/${in}/${in}_R1_filtered.fastq.gz ${scratch_dir}/../02-preprocessing/${in}/${in}_R2_filtered.fastq.gz > $in/${in}_reads.fastq' &"; done >> _01_seqtk.sh
+
+#This generates the second script
+cat ../samples_id.txt | while read in; do echo "mkdir $in; srun --partition short_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/SEQTK.${in}.%j.log singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-seqtk-1.3--h5bf99c6_3.img bash -c 'seqtk seq -L 100 $in/${in}_reads.fastq > $in/${in}_filtered_reads.fastq' &"; done > _02_seqtk.sh
+
+#This generates the third script
+cat ../samples_id.txt | while read in; do echo "srun --partition long_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/DIAMOND.${in}.%j.log singularity exec -B ${scratch_dir}/../../../ -B  /data/ucct/bi/research/20260209_TFM_LMUNOZ_JL-VL_T/REFERENCES /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-diamond-2.1.12--hdb4b4cc_1.img diamond blastx -d /data/ucct/bi/research/20260209_TFM_LMUNOZ_JL-VL_T/REFERENCES/viral_assembly_aa.dmnd -q $in/${in}_filtered_reads.fastq -o $in/diamond_reads.tsv --outfmt 102 --top 2  --include-lineage  -p 16 --ultra-sensitive --min-score 80 --query-cover 60 --id 70 &"; done > _03_diamond.sh
+cat ../samples_id.txt | while read in; do echo "mkdir -p $in; srun --partition long_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/DIAMOND.${in}.%j.log singularity exec -B ${scratch_dir}/../../../ -B  /data/ucct/bi/research/20260209_TFM_LMUNOZ_JL-VL_T/REFERENCES /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-diamond-2.1.12--hdb4b4cc_1.img diamond blastx -d /data/ucct/bi/research/20260209_TFM_LMUNOZ_JL-VL_T/REFERENCES/viral_assembly_aa.dmnd -q ../06-spades/$in/${in}_filtered_contigs.fasta -o $in/diamond_output102.tsv --outfmt 102 --top 10 --include-lineage -p 16 --ultra-sensitive --min-score 50  &"; done >> _03_diamond.sh
