@@ -1,1 +1,20 @@
-Executing this lablog creates a delivery folder contaning the Krona HTML file and the MultiQC summaries
+#Executing this lablog creates a delivery folder contaning the MultiQC summaries as well as the script _01_results.sh
+#Executing this script returns one folder per sample with a soft link to the Krona reports for reads and contigs
+
+scratch_dir=$(echo $PWD | sed "s/\/data\/ucct\/bi\/scratch_tmp/\/scratch/g")
+
+DELIVERY_FOLDER="$(date '+%Y%m%d')_entrega01"
+
+mkdir -p "${DELIVERY_FOLDER}/samples"
+
+# Taxonomy identification service
+
+cd $DELIVERY_FOLDER/
+ln -s ../../ANALYSIS/04-multiqc/multiqc_raw_report.html
+ln -s ../../ANALYSIS/04-multiqc/multiqc_trim_report.html
+
+cat ../../ANALYSIS/samples.txt | while read in; do echo "(mkdir -p samples/$in; srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} ln -s ../../../ANALYSIS/10-krona/$in/${in}_krona.html samples/$in/) &"; done > _01_results.sh
+cat ../../ANALYSIS/samples.txt | while read in; do echo "(mkdir -p samples/$in; srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} ln -s ../../../ANALYSIS/10-krona/$in/${in}_krona_reads.html samples/$in/) &"; done >> _01_results.sh
+
+#find . -xtype l -delete
+cd -
