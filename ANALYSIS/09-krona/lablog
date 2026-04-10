@@ -1,1 +1,28 @@
-#Executing this lablog creates four scripts
+#Executing this lablog creates four scripts: _01_viral_filter.sh, _02_viral_filter.sh, _03_krona_input.sh, _04_krona.sh
+#Executing _01_viral_filter.sh filters the diamond output in 102 format and saves only those contigs or reads that have been classified at least to family level
+#Executing _02_viral_filter.sh filters the contigs by their coverage (the default threshold is > 1) and the reads by the number of reads assigned to a taxID (the default threshold is > 1)
+#Executing _03_krona_input.sh reformats the filtered results into tab separated archives that krona accepts
+#Executing _04_krona.sh returns two HTML archives per sample, for the reads and the contigs
+#IMPORTANT: in case some samples does no pass the coverage filter, then uncomment the indicated code line, this will rewrite the _02_viral_filter.sh with a coverage filter of 0.25
+
+mkdir -p logs
+
+scratch_dir=$(echo $PWD | sed "s/\/data\/ucct\/bi\/scratch_tmp/\/scratch/g")
+
+#This first lines create the _01_viral_filter.sh
+cat ../samples_id.txt | while read in; do echo "mkdir -p $in; srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output $in/${in}_species_filter.tsv awk -F '\\t' '{ n = split(\$4,a,\";\"); if (n >= 10  && a[n] ~ /virus/ && a[n] !~ /phage/) print \$0 }' ../08-diamond/$in/diamond_output102.tsv > logs/FILTER.${in}.%j.log &"; done > _01_viral_filter.sh
+cat ../samples_id.txt | while read in; do echo "mkdir -p $in; srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output $in/${in}_species_filter_reads.tsv awk -F '\\t' '{ n = split(\$4,a,\";\"); if (n >= 10 && a[n] ~ /virus/ && a[n] !~ /phage/) print \$0 }' ../08-diamond/$in/diamond_reads.tsv > logs/FILTER.${in}.%j.log &"; done >> _01_viral_filter.sh
+
+#This lines create the _02_viral_filter.sh
+cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output logs/FILTER.${in}.%j.log awk -F'\t' 'BEGIN{OFS=\"\t\"} { match(\$1, /cov_([0-9]+\.[0-9]+)/, arr); if (arr[1] >= 1) print \$0, arr[1] }' $in/${in}_species_filter.tsv > ${in}/${in}_filter_hit.tsv &"; done > _02_viral_filter.sh
+# In case some of the samples does not pass the previous filter, then comment the previous line and uncomment the following, then execute the lablog again _02_viral_filter.sh will be rewritten
+#cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output logs/FILTER.${in}.%j.log awk -F'\t' 'BEGIN{OFS=\"\t\"} { match(\$1, /cov_([0-9]+\.[0-9]+)/, arr); if (arr[1] >= 0.25) print \$0, arr[1] }' $in/${in}_species_filter.tsv > ${in}/${in}_filter_hit.tsv &"; done > _02_viral_filter.sh
+cat ../samples_id.txt | while read in; do echo "mkdir -p $in && srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output logs/FILTER_TAXID.${in}.%j.log awk 'BEGIN{} { count[\$2]++; lines[NR]=\$0; tax[NR]=\$2 } END { for (i=1; i<=NR; i++) { if (count[tax[i]] > 1) print lines[i] } }' $in/${in}_species_filter_reads.tsv > $in/${in}_filter_hit_reads.tsv &"; done >> _02_viral_filter.sh
+
+#This lines create the _03_krona_input.sh
+cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output logs/KRONA_INPUT.${in}.%j.log awk -F'\t' 'BEGIN{OFS=\"\t\"} {print \$1, \$2, \$3, \$5, \$6}' ${in}/${in}_filter_hit.tsv > ${in}/${in}_krona_input.tsv &"; done > _03_krona_input.sh
+cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output logs/KRONA_INPUT_READS.${in}.%j.log awk -F'\t' 'BEGIN{OFS=\"\t\"} {print \$1, \$2, \$3}' ${in}/${in}_filter_hit_reads.tsv > ${in}/${in}_krona_input_reads.tsv &"; done >> _03_krona_input.sh
+
+#This lines create the _04_krona.sh
+cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output logs/${in}.%j.log singularity exec -B ${scratch_dir}/../../../ -B /home/lucia.munoz/taxonomy  /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-krona-2.8.1--pl5321hdfd78af_1.img ktImportTaxonomy $in/${in}_krona_input.tsv -q 1 -t 2 -m 4 -s 3  -tax /home/lucia.munoz/taxonomy -o $in/${in}_krona.html  &"; done > _04_krona.sh
+cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output logs/${in}.%j.log singularity exec -B ${scratch_dir}/../../../ -B /home/lucia.munoz/taxonomy  /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-krona-2.8.1--pl5321hdfd78af_1.img ktImportTaxonomy $in/${in}_krona_input_reads.tsv -q 1 -t 2 -s 3  -tax /home/lucia.munoz/taxonomy -o $in/${in}_krona_reads.html  &"; done >> _04_krona.sh
