@@ -9,8 +9,8 @@ scratch_dir=$(echo $PWD | sed "s/\/data\/ucct\/bi\/scratch_tmp/\/scratch/g")
 
 #This line creates the multiQC for the raw samples
 
-echo "srun --partition short_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/MULTIQC_raw.log singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-multiqc-1.30--pyhdfd78af_0.img multiqc ../01-fastqc -n multiqc_raw_report.html" > _01_multiqc.sh
+echo "srun --partition short_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/MULTIQC_raw.log singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-multiqc-1.30--pyhdfd78af_0.img multiqc ../01-fastqc -n multiqc_raw_report.html &" > _01_multiqc.sh
 
 #This line creates the multiQC for the trimmed samples
 
-echo "srun --partition short_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/MULTIQC_trim.log singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-multiqc-1.30--pyhdfd78af_0.img multiqc ../03-prepocQC -n multiqc_trim_report.html" >> _01_multiqc.sh
+echo "srun --partition short_idx --cpus-per-task 8 --chdir $scratch_dir --output logs/MULTIQC_trim.log singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-multiqc-1.30--pyhdfd78af_0.img multiqc ../03-prepocQC -n multiqc_trim_report.html &" >> _01_multiqc.sh
