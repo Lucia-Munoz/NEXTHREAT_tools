@@ -1,4 +1,4 @@
-#Executing this lablog will create the script _01_rawfastqc.sh, executing this script will perform fastQC html files for the raw reads
+#Executing this lablog will create the script _01_rawfastqc.sh, executing this script will create two HTML FASTQC files per sample one for the forward (R1) raw reads fastq and another for the reverse (R2) raw reads fastq
 
 # module load singularity (this must me executed on the terminal)
 
