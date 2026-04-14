@@ -1,4 +1,4 @@
-#Executing this lablog creates the _01_trimmedfastqc.sh, executing this scripts creates fastQC HTML files for the trimmed reads
+#Executing this lablog creates the _01_trimmedfastqc.sh, executing this scripts creates two fastQC HTML files per sample for the trimmed reads, exactly like the _01_fastqc.sh script
 
 # module load singularity (this must be executed in the terminal)
 
