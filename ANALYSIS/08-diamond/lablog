@@ -1,5 +1,5 @@
-#Executing this lablog will create three scripts _01_seqtk.sh, _02_seqtk.sh and _03_diamond.sh. The first script (_01_seqtk.sh) filters contigs by lenght > 300 and concatenates the trim reads into an unique fasta
-#The _02_seqtk.sh filters reads by lenght >100. Finally the _03_diamond.sh executes the homology search with DIAMOND and the taxonomy identification using the LCA algorithm
+#Executing this lablog will create three scripts _01_seqtk.sh, _02_seqtk.sh and _03_diamond.sh. The first script (_01_seqtk.sh) filters contigs by lenght > 300 and concatenates the trimmed reads into an unique fasta
+#The _02_seqtk.sh filters the reads by lenght >100. Finally the _03_diamond.sh executes the homology search with DIAMOND and the taxonomy identification using the LCA algorithm
 
 #module load singularity (this must me executed on the terminal)
 
