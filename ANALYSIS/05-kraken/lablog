@@ -1,4 +1,5 @@
 #Executing this lablog creates the script _01_kraken2.sh, the output of this script are two archives viral_reads_{sample}_R1.fastq and  viral_reads_{sample}_R2.fastq, containing the unclassified reads, the classified reads are not saved
+# The database selected here is kraken2_vero, made for VERO cells, however this must be changed according to the samples of the specific services, the different databases for Kraken can be found in: /data/ucct/bi/references/kraken/
 
 #module load singularity (this must be executed on the terminal)
 
