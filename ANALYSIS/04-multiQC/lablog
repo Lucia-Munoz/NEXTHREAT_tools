@@ -1,5 +1,5 @@
 #Executing this lablog will create the script _01_multiqc.sh, executing this script will create two multiQC HTML files, one for the raw samples and another for the trimmed samples.
-#Note that this code has an issue, it does not run on the background so you have to wait until it finishes
+#Note that in this case this script does not create one HTML file per sample, instead it groups all of them into one file.
 
 #module load singularity (this must be executed on the terminal)
 
