@@ -1,4 +1,5 @@
 #Executing this lablog creates the script _01_spades.sh, this script creates de novo assembly for the unclassified reads obtained from kraken
+# In this case, the specific set of kmers: 21,33,55,77,99 is used to maximize the creation of longer contigs
 
 #module load singularity (this must be executed on the terminal)
 
