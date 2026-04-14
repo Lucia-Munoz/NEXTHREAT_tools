@@ -1,6 +1,6 @@
 #Executing this lablog will create the script _01_quast.sh, this script returns quast reports for the previous assembly done with SPADES
 
-#module load singularity (this must be executed on th terminal)
+#module load singularity (this must be executed on the terminal)
 
 mkdir -p logs
 
