@@ -1,7 +1,7 @@
 #Executing this lablog will create the _01_fastp.sh script, executing this script will perform raw reads preprocessing with fastp
 # The specific commands are fixed and are specified in the last line of this code
 
-#module load singularity (this must be xecuted on th terminal
+#module load singularity (this must be executed on the terminal)
 
 mkdir logs
 
