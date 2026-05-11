@@ -12,7 +12,7 @@ mkdir -p logs
 
 scratch_dir=$(echo $PWD | sed "s/\/data\/ucct\/bi\/scratch_tmp/\/scratch/g")
 
-sample=$(sed -n "${SLURM_ARRAY_TASK_ID}p" ../samples.txt)
+sample=$(sed -n "${SLURM_ARRAY_TASK_ID}p" ../samples_id.txt)
 
 mkdir -p ${sample}
 
