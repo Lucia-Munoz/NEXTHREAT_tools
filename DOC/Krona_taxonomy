@@ -1,0 +1,3 @@
+#Previous to running Krona we have to download and proccess the NCBI Taxonomy database and save it in the pathway, for this we
+#have to run this command on the command line
+ktUpdateTaxonomy.sh
