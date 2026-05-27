@@ -3,7 +3,9 @@
 #Executing _02_viral_filter.sh filters the contigs by their coverage (the default threshold is > 1) and the reads by the number of reads assigned to a taxID (the default threshold is > 1)
 #Executing _03_krona_input.sh reformats the filtered results into tab separated archives that krona accepts
 #Executing _04_krona.sh returns two HTML archives per sample, for the reads and the contigs
-#IMPORTANT: in case some samples does no pass the coverage filter, then uncomment the indicated code line, this will rewrite the _02_viral_filter.sh with a coverage filter of 0.25
+#IMPORTANT: before executing Krona for the first time, it is important to execute the ktImportTaxonomy, uncomment the following line
+
+#singularity exec -B /usr/bin/ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-krona-2.8.1--pl5321hdfd78af_1.img ktUpdateTaxonomy.sh /home/lucia.munoz/taxonomy /usr/local/bin/ktUpdateTaxonomy.sh
 
 mkdir -p logs
 
@@ -15,8 +17,6 @@ cat ../samples_id.txt | while read in; do echo "mkdir -p $in; srun --partition s
 
 #This lines create the _02_viral_filter.sh
 cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output ${in}/${in}_filter_hit.tsv awk -F'\t' 'BEGIN{OFS=\"\t\"} { match(\$1, /cov_([0-9]+\.[0-9]+)/, arr); if (arr[1] >= 1) print \$0, arr[1] }' $in/${in}_species_filter.tsv > logs/FILTER.${in}.%j.log &"; done > _02_viral_filter.sh
-# In case some of the samples does not pass the previous filter, then comment the previous line and uncomment the following, then execute the lablog again _02_viral_filter.sh will be rewritten
-#cat ../samples_id.txt | while read in; do echo "srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output ${in}/${in}_filter_hit.tsv awk -F'\t' 'BEGIN{OFS=\"\t\"} { match(\$1, /cov_([0-9]+\.[0-9]+)/, arr); if (arr[1] >= 0.25) print \$0, arr[1] }' $in/${in}_species_filter.tsv > logs/FILTER.${in}.%j.log &"; done > _02_viral_filter.sh
 cat ../samples_id.txt | while read in; do echo "mkdir -p $in && srun --partition short_idx --cpus-per-task 8 --chdir ${scratch_dir} --output $in/${in}_filter_hit_reads.tsv awk 'BEGIN{} { count[\$2]++; lines[NR]=\$0; tax[NR]=\$2 } END { for (i=1; i<=NR; i++) { if (count[tax[i]] > 1) print lines[i] } }' $in/${in}_species_filter_reads.tsv > logs/FILTER_TAXID.${in}.%j.log &"; done >> _02_viral_filter.sh
 
 #This lines create the _03_krona_input.sh
