@@ -1,4 +1,5 @@
-#Here we define how the statistics were calculated
+#Here we define how the statistics were calculated.
+#This scripts serves as a 'protocol' to understand how the statistical analysis of the samples was performed, there is no specific data, it is just an example
 #First, for comparisons between two groups, first we load all the packages we need
 library(tidyverse)
 library(rstatix)
@@ -65,7 +66,7 @@ anova <- anova_test(
 
 anova
 
-#If pvalue < 0.05 then we perform Dunn test as post hoc
+#If pvalue < 0.05 then we perform pairwise t-test as post hoc
 posthoc <- datos_largo %>%
   pairwise_t_test(
     valor ~ metodo,
