@@ -19,5 +19,5 @@ mkdir -p ${sample}
 srun awk -F'\t' 'BEGIN{OFS="\t"} { match($1, /cov_([0-9]+\.[0-9]+)/, arr); if (arr[1] >= 2) print $0, arr[1] }' \
     ${sample}/${sample}_species_filter.tsv > ${sample}/${sample}_filter_hit.tsv
 
-srun awk 'BEGIN{} { count[$2]++; lines[NR]=$0; tax[NR]=$2 } END { for (i=1; i<=NR; i++) { if (count[tax[i]] > 5) print lines[i] } }' \
+srun awk 'BEGIN{} { count[$2]++; lines[NR]=$0; tax[NR]=$2 } END { for (i=1; i<=NR; i++) { if (count[tax[i]] > 1) print lines[i] } }' \
     ${sample}/${sample}_species_filter_reads.tsv > ${sample}/${sample}_filter_hit_reads.tsv
