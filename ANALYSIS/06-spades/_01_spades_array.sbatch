@@ -15,4 +15,4 @@ sample=$(sed -n "${SLURM_ARRAY_TASK_ID}p" ../samples_id.txt)
 
 mkdir -p ${sample}
 
-srun singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-spades-4.0.0--h5fb382e_1.img metaviralspades.py -1 ${scratch_dir}/../05-kraken/${sample}/viral_reads_${sample}_1.fastq -2 ${scratch_dir}/../05-kraken/${sample}/viral_reads_${sample}_2.fastq -k 21,33,55,77,99 -m 280 -o ${sample
+srun singularity exec -B ${scratch_dir}/../../../ /data/ucct/bi/pipelines/singularity-images/depot.galaxyproject.org-singularity-spades-4.0.0--h5fb382e_1.img metaviralspades.py -1 ${scratch_dir}/../05-kraken/${sample}/viral_reads_${sample}_1.fastq -2 ${scratch_dir}/../05-kraken/${sample}/viral_reads_${sample}_2.fastq -k 21,33,55,77,99 -m 80 -o ${sample
