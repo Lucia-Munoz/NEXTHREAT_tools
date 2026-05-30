@@ -1,4 +1,4 @@
-# This is the first lablog to execute, it renames the samples to avoid any name-related issue during the analysis
+# This is the first lablog to execute, it renames the samples to avoid any name-related issue during the analysis, the remaned raw reads will be stored in the folder 00-reads
 
 mkdir -p 00-reads
 cd 00-reads
