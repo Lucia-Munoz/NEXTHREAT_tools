@@ -9,3 +9,17 @@ This github contains five main folders:
 - RESULTS: once the pipeline is finished, the results will be saved in this folder
 
 Within ANALYSIS you can find an extra non-numbered folder named auxiliar scripts inside are the scripts used for developing the statistical analysis for the TFM (during which this pipeline was developed), however, they are not needed for the pipeline itself
+
+## SOFTWARES AND DEPENDENCIES
+
+<img width="3496" height="2423" alt="Plantilla de flujo de procesos de negocio" src="https://github.com/user-attachments/assets/1ad0bd06-447a-450c-9282-d605dce7869a" />
+
+The image above shows the pipeline workflow, which employs the following software versions:
+- FASTQC v0.11.9
+- FASTP v0.20.0
+- MultiQC v1.30
+- Kraken2 v2.0.8
+- SPAdes v4.0.0
+- QUAST v5.2.0
+- DIAMOND v2.1.12
+- Krona v2.8.1
